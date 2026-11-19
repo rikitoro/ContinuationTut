@@ -1,0 +1,6 @@
+name = "ContinuationTut"
+version = "0.1.0"
+defaultTargets = ["ContinuationTut"]
+
+[[lean_lib]]
+name = "ContinuationTut"

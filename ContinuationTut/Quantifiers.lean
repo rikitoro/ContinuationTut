@@ -36,6 +36,54 @@ def inverse : Cont Bool Bool := do
 #eval Cont.reset inverse
 #guard Cont.reset inverse == true
 
+theorem surface_expansion :
+  Cont.reset surface = people.any fun x ↦ people.all fun y ↦ loves x y := by
+  rfl
 
-#eval Cont.reset surface
+theorem inverse_expansion :
+  Cont.reset inverse = people.all fun y ↦ people.any fun x ↦ loves x y := by
+  rfl
+
+example : Cont.reset surface ≠ Cont.reset inverse := by
+  decide
+
+/- Prop 版 -/
+
+def someoneP  : Cont Prop Person := fun k ↦ ∃ x, k x
+def everyoneP : Cont Prop Person := fun k ↦ ∀ x, k x
+
+def surfaceP : Prop := Cont.reset <| do
+  let subject ← someoneP
+  let object ← everyoneP
+  pure (subject = object)
+
+def inverseP : Prop := Cont.reset <| do
+  let object ← everyoneP
+  let subject ← someoneP
+  pure (subject = object)
+
+theorem surfaceP_expansion : surfaceP = (∃ x : Person, ∀ y : Person, x = y) := by
+  rfl
+
+theorem inverseP_expansion : inverseP = (∀ y : Person, ∃ x : Person, x = y) := by
+  rfl
+
+theorem inveseP_true : inverseP := by
+  change ∀ y : Person, ∃ x, x = y
+  intro y
+  apply Exists.intro y
+  rfl
+
+theorem surface_false : ¬ surfaceP := by
+  change ¬ (∃ x : Person, ∀ y, x = y)
+  intro h
+  obtain ⟨x, hx⟩ := h
+  have ha := hx .anna
+  have hb := hx .bruno
+  rw [hb] at ha
+  cases ha
+
+
+
+
 end ContinuationTut.Quantifiers
